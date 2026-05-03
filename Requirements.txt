@@ -1,7 +1,7 @@
 Network Scanner Project — Requirements
 
-This project uses ONLY the Python Standard Library.
-No external packages are required.
+This project uses only the Python Standard Library.
+No external packages are required or used.
 
 Standard Library modules used:
    - socket          (TCP connections)
