@@ -33,7 +33,7 @@ This tool was built to simulate real-world network auditing workflows used by se
 ##  Features
 
 | Feature | Description |
-|---|---|---|---|
+|---|---|
 |  Multi-threaded | Up to 1000 concurrent threads for fast scanning |
 |  Subnet Support | Accepts full CIDR notation (e.g., `192.168.1.0/24`) |
 |  Service Detection | Identifies 20+ common services by port number |
@@ -91,6 +91,8 @@ python scanner.py --target <IP or CIDR> --ports <ports> --threads <N> --timeout 
 ---
 
 ## Examples
+
+```
 
 ### 1. Scan a single host (common ports)
 ```bash
