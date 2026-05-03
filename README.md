@@ -22,6 +22,8 @@ A high-performance, multi-threaded **TCP Port Scanner** built in Python for inte
 
 This tool was built to simulate real-world network auditing workflows used by security professionals. It scans TCP ports across single hosts or entire subnets, identifies open services, and provides a clean report — all via a professional CLI interface.
 
+Access GitHub Repository using - https://github.com/zeee99/Network-Scanner-Project
+
 **Key Technologies Used:**
 - `socket` — Core TCP connection handling
 - `ipaddress` — CIDR subnet parsing
