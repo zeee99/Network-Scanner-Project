@@ -181,4 +181,73 @@ def parse_ports(ports_arg: str):
 # END OF PART 2
 # ======================================================
 
- 
+# ==============================================================
+# PART 3 - MULTI-THREADED SCANNING ENGINE
+# Author : Dulmeth
+# About  : High performance concurrent scanning using ThreadPoolExecutor
+# ==============================================================
+
+def run_scan(targets: list, ports: list, threads: int, timeout: float):
+    """
+    Written by Friend 2.
+    Launches concurrent TCP scans using a ThreadPoolExecutor thread pool.
+    Instead of scanning one port at a time which is slow, this sends
+    many workers at the same time to dramatically speed up the scan.
+    Returns a list of all open port result dictionaries.
+    """
+    open_ports = []
+    total_tasks = len(targets) * len(ports)
+    completed = 0
+
+    print(f"\n[*] Scanning {len(targets)} host(s) | "
+          f"{len(ports)} port(s) | "
+          f"{threads} thread(s) | "
+          f"timeout={timeout}s")
+    print(f"[*] Total scan tasks: {total_tasks:,}")
+    print("-" * 60)
+
+    start_time = time.time()
+
+    # Create thread pool with the specified number of worker threads
+    with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
+
+        # Submit every IP and port combination as a separate job to the pool
+        future_map = {
+            executor.submit(scan_port, ip, port, timeout): (ip, port)
+            for ip in targets
+            for port in ports
+        }
+
+        # Process results as each thread finishes
+        for future in concurrent.futures.as_completed(future_map):
+            completed += 1
+
+            # Show live progress every 500 tasks or at the very end
+            if completed % 500 == 0 or completed == total_tasks:
+                pct     = (completed / total_tasks) * 100
+                elapsed = time.time() - start_time
+                print(
+                    f"  Progress: {completed:,}/{total_tasks:,} "
+                    f"({pct:.1f}%) | Elapsed: {elapsed:.1f}s",
+                    end="\r"
+                )
+
+            # If port is open save it and print immediately
+            result = future.result()
+            if result:
+                open_ports.append(result)
+                service = result["service"]
+                banner  = f" | {result['banner']}" if result["banner"] else ""
+                print(
+                    f"\n  [OPEN]  "
+                    f"{result['ip']}:{result['port']:<6} "
+                    f"({service}){banner}"
+                )
+
+    elapsed_total = time.time() - start_time
+    print(f"\n\n[*] Scan complete in {elapsed_total:.2f} seconds.")
+    return open_ports
+
+# ======================================================
+# END OF PART 3
+# ======================================================
