@@ -251,3 +251,159 @@ def run_scan(targets: list, ports: list, threads: int, timeout: float):
 # ======================================================
 # END OF PART 3
 # ======================================================
+# ==============================================================
+# PART 4 - CLI INTERFACE & REPORT GENERATOR
+# Author : Sandaruwan
+# About  : Professional command line interface and scan report output
+# ==============================================================
+
+def build_arg_parser():
+    """
+    Written by Friend 3.
+    Builds the professional command line argument parser using argparse.
+    Allows users to define targets, port ranges, thread counts
+    and timeouts directly from the terminal.
+    """
+    parser = argparse.ArgumentParser(
+        prog="scanner.py",
+        description="Network Discovery & Auditing Tool — Multi-threaded TCP Port Scanner",
+        formatter_class=argparse.RawTextHelpFormatter,
+        epilog="""
+Examples:
+  python scanner.py --target 192.168.1.0/24 --ports 1-1024 --threads 100
+  python scanner.py --target 192.168.1.1    --ports 22,80,443
+  python scanner.py --target 10.0.0.0/28   --ports 1-65535 --threads 200 --timeout 0.5
+        """
+    )
+    parser.add_argument(
+        "--target", "-t",
+        required=True,
+        help="Target IP address or CIDR subnet (e.g. 192.168.1.0/24)"
+    )
+    parser.add_argument(
+        "--ports", "-p",
+        default="1-1024",
+        help="Port(s) to scan. Examples: 80 | 1-1024 | 22,80,443\n(default: 1-1024)"
+    )
+    parser.add_argument(
+        "--threads", "-T",
+        type=int,
+        default=100,
+        help="Number of concurrent threads (default: 100)"
+    )
+    parser.add_argument(
+        "--timeout", "-to",
+        type=float,
+        default=1.0,
+        help="TCP connection timeout in seconds (default: 1.0)"
+    )
+    parser.add_argument(
+        "--output", "-o",
+        default=None,
+        help="Save results to a text file (optional)"
+    )
+    return parser
+
+
+def print_report(results: list, target: str, ports_scanned: int):
+    """
+    Written by Friend 3.
+    Prints a clean formatted summary report of all open ports found.
+    Results are grouped by host IP and sorted numerically.
+    """
+    print("\n" + "=" * 60)
+    print("          SCAN REPORT")
+    print("=" * 60)
+    print(f"  Target   : {target}")
+    print(f"  Ports    : {ports_scanned} scanned")
+    print(f"  Time     : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"  Open     : {len(results)} port(s) found")
+    print("=" * 60)
+
+    if not results:
+        print("  No open ports discovered.")
+    else:
+        # Group all results by their host IP address
+        by_host = defaultdict(list)
+        for r in results:
+            by_host[r["ip"]].append(r)
+
+        # Sort hosts numerically by IP address
+        for ip in sorted(by_host.keys(), key=lambda x: ipaddress.ip_address(x)):
+            print(f"\n  Host: {ip}")
+            print(f"  {'PORT':<8} {'SERVICE':<15} {'BANNER'}")
+            print(f"  {'-'*7} {'-'*14} {'-'*30}")
+            for r in sorted(by_host[ip], key=lambda x: x["port"]):
+                banner = r["banner"] if r["banner"] else "-"
+                print(f"  {r['port']:<8} {r['service']:<15} {banner}")
+
+    print("\n" + "=" * 60)
+
+
+# ==============================================================
+# MAIN - ENTRY POINT
+# Combines all 4 parts together into one working program
+# ==============================================================
+
+def main():
+    # Show the banner
+    print(BANNER)
+
+    # Part 4 - Parse CLI arguments
+    parser = build_arg_parser()
+    args   = parser.parse_args()
+
+    # Validate thread count
+    if args.threads < 1 or args.threads > 1000:
+        print("[ERROR] Threads must be between 1 and 1000.")
+        sys.exit(1)
+
+    # Part 2 - Parse targets and ports
+    targets = parse_targets(args.target)
+    ports   = parse_ports(args.ports)
+
+    # Show scan configuration summary
+    print(f"[+] Target   : {args.target}")
+    print(f"[+] Hosts    : {len(targets)}")
+    print(f"[+] Ports    : {len(ports)} ({args.ports})")
+    print(f"[+] Threads  : {args.threads}")
+    print(f"[+] Timeout  : {args.timeout}s")
+
+    # Warn user if scan is very large
+    total = len(targets) * len(ports)
+    if total > 50_000:
+        confirm = input(f"\n[!] Large scan: {total:,} tasks. Continue? [y/N]: ")
+        if confirm.lower() != "y":
+            print("Aborted.")
+            sys.exit(0)
+
+    # Part 3 - Run the multi-threaded scan (uses Part 1 internally)
+    results = run_scan(targets, ports, args.threads, args.timeout)
+
+    # Part 4 - Print the final report
+    print_report(results, args.target, len(ports))
+
+    # Save results to file if --output was specified
+    if args.output:
+        try:
+            with open(args.output, "w") as f:
+                f.write(f"Scan Report - {datetime.now()}\n")
+                f.write(f"Target: {args.target}\n")
+                f.write(f"Open ports found: {len(results)}\n\n")
+                for r in sorted(results, key=lambda x: (x["ip"], x["port"])):
+                    f.write(f"{r['ip']}:{r['port']} ({r['service']})")
+                    if r["banner"]:
+                        f.write(f" | {r['banner']}")
+                    f.write("\n")
+            print(f"\n[+] Results saved to: {args.output}")
+        except IOError as e:
+            print(f"[ERROR] Could not write to file: {e}")
+
+
+if __name__ == "__main__":
+    main()
+
+# ======================================================
+# END OF PART 4
+# This is the complete scanner.py file
+# ======================================================
