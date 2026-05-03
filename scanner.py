@@ -113,4 +113,72 @@ def scan_port(ip: str, port: int, timeout: float):
 # ======================================================
 # END OF PART 1
 # ======================================================
+
+# ==============================================================
+# PART 2 - SUBNET PARSING & IP ADDRESS HANDLING
+# Author : Sahan
+# About  : Parses CIDR blocks and port ranges into scannable lists
+# ==============================================================
+
+def parse_targets(target: str):
+    """
+    Written by Friend 1.
+    Accepts a single IP address or a full CIDR subnet block.
+    Returns a list of all host IP strings to scan.
+
+    Examples:
+        '192.168.1.1'    -> ['192.168.1.1']
+        '192.168.1.0/24' -> ['192.168.1.1', ..., '192.168.1.254']
+    """
+    try:
+        network = ipaddress.ip_network(target, strict=False)
+        # Single host - return just that one IP address
+        if network.num_addresses == 1:
+            return [str(network.network_address)]
+        # Full subnet - automatically skip network and broadcast addresses
+        return [str(host) for host in network.hosts()]
+    except ValueError as e:
+        print(f"[ERROR] Invalid target '{target}': {e}")
+        sys.exit(1)
+
+
+def parse_ports(ports_arg: str):
+    """
+    Written by Friend 1.
+    Parses the port argument string into a sorted list of integers.
+
+    Supports multiple formats:
+        Single port  :  '80'
+        Range        :  '1-1024'
+        Comma list   :  '22,80,443'
+        Mixed        :  '22,80-90,443'
+    """
+    ports = set()
+    for part in ports_arg.split(","):
+        part = part.strip()
+        if "-" in part:
+            try:
+                start, end = part.split("-", 1)
+                r_start, r_end = int(start), int(end)
+                if not (1 <= r_start <= 65535 and 1 <= r_end <= 65535):
+                    raise ValueError
+                ports.update(range(r_start, r_end + 1))
+            except ValueError:
+                print(f"[ERROR] Invalid port range: '{part}'")
+                sys.exit(1)
+        else:
+            try:
+                p = int(part)
+                if not (1 <= p <= 65535):
+                    raise ValueError
+                ports.add(p)
+            except ValueError:
+                print(f"[ERROR] Invalid port: '{part}'")
+                sys.exit(1)
+    return sorted(ports)
+
+# ======================================================
+# END OF PART 2
+# ======================================================
+
  
