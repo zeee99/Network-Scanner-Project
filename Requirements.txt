@@ -1,0 +1,16 @@
+Network Scanner Project — Requirements
+
+This project uses ONLY the Python Standard Library.
+No external packages are required.
+
+Standard Library modules used:
+   - socket          (TCP connections)
+   - ipaddress       (CIDR/subnet parsing)
+   - concurrent.futures (multi-threaded scanning)
+   - argparse        (CLI interface)
+   - sys             (exit handling)
+   - time            (timing/progress)
+   - datetime        (report timestamps)
+   - collections     (defaultdict for report grouping)
+
+Python version requirement: Python 3.10+
