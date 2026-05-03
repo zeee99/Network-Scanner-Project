@@ -33,7 +33,7 @@ This tool was built to simulate real-world network auditing workflows used by se
 ##  Features
 
 | Feature | Description |
-
+|---|---|---|---|
 |  Multi-threaded | Up to 1000 concurrent threads for fast scanning |
 |  Subnet Support | Accepts full CIDR notation (e.g., `192.168.1.0/24`) |
 |  Service Detection | Identifies 20+ common services by port number |
@@ -51,7 +51,7 @@ This tool was built to simulate real-world network auditing workflows used by se
 
 ---
 
-## Installation
+## Installation & GitHub Push
 
 ```bash
 1. Clone the repository
@@ -65,6 +65,10 @@ git push
 
 3. Install dependencies (none required, but listed for reference)
 pip install -r requirements.txt
+
+2. Create a virtual environment (This is an optional step)
+python -m venv venv
+venv\Scripts\activate    # Windows
 
 
 
