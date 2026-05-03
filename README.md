@@ -1,6 +1,6 @@
 Network Scanner Project
 
-A high-performance, multi-threaded **TCP Port Scanner** built in Python for internal network auditing and discovery. Developed as part of a cybersecurity engineering coursework assignment.
+A high-performance, multi-threaded **TCP Port Scanner** built in Python for internal network auditing and discovery. Developed as part of a Network Programming Design course work assignment.
 
 ---
 
@@ -55,13 +55,13 @@ This tool was built to simulate real-world network auditing workflows used by se
 
 ```bash
 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/Network-Scanner-Project.git
+git clone https://github.com/zeee99/Network-Scanner-Project.git
 cd Network-Scanner-Project
 
-2. (Optional) Create a virtual environment
-python -m venv venv
-source venv/bin/activate        # Linux/Mac
-venv\Scripts\activate           # Windows
+2. Push to main repository
+git add .
+git commit -m "xxxx"
+git push
 
 3. Install dependencies (none required, but listed for reference)
 pip install -r requirements.txt
@@ -168,7 +168,7 @@ python scanner.py --target 192.168.1.0/24 --ports 80,443 --output results.txt
 Network-Scanner-Project/
 ├── scanner.py          # Main source code
 ├── README.md           # Documentation (this file)
-└── requirements.txt    # Dependencies (empty — stdlib only)
+└── requirements.txt    # Dependencies 
 ```
 
 ---
@@ -207,14 +207,11 @@ This tool is intended **strictly for authorized internal network auditing**. Do 
 
 | Member | GitHub | Role |
 |---|---|---|
-| Member 1 | @username1 | Core networking & socket module |
-| Member 2 | @username2 | Subnet parsing & IP handling |
-| Member 3 | @username3 | Threading & concurrency engine |
-| Member 4 | @username4 | CLI interface & argparse |
-| Member 5 | @username5 | Testing, README & documentation |
+| Hiruth | @zeee99 | Core Networking & Socket |
+| Sahan | @Sahan-2004 | Subnet Parsing & IP |
+| Dulmeth | @Dulmeth-Arosha | Multi-threaded Engine |
+| Sandaruwan | @sandaruwanachintha | CLI Interface & Report  |
 
 > All members have active commit histories visible in the repository.
 
----
-
-*Network-Scanner-Project | Group XX | Python Programming NDP Assignment*
+*Network-Scanner-Project | Group 05 
